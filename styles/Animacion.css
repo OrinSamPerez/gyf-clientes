@@ -1,0 +1,13 @@
+.module {
+    animation:alert 4s;
+}
+
+@keyframes alert{
+0%{border-style: solid;
+    border-image: 
+      linear-gradient(
+        to bottom, 
+        rgb(0, 132, 255), 
+        rgba(0, 0, 0, 0)
+      ) 1 100%;}
+}

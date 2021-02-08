@@ -1,0 +1,213 @@
+nav{
+    list-style: none;
+    float: left;
+    position: fixed;
+    height: 100%;
+    padding: 20px;
+
+
+    
+}
+a{
+    width: 500px;
+
+}
+
+.nav-container{
+
+    height: 100%;
+
+    
+}
+.grid-container{
+    display: grid;
+    grid-template-columns: 3% 1fr;
+}
+a:hover{
+    color: rgb(0, 238, 255);
+}
+.item-0{
+    position: absolute;
+    top: 20%;
+    left: 20%;
+    color: black
+}
+.item-1{
+    position: absolute;
+    top: 40%;
+    color: black;
+}
+.item-2{
+    position: absolute;
+    color: black;
+    top: 60%;
+}
+.item-3{
+    position: absolute;
+    bottom: 20%;
+    color: black;
+
+}
+.item-4{
+    color: rgb(255, 97, 189);
+
+}
+.search-form li:hover{
+    color: rgb(2, 129, 97);
+    cursor: grab;
+}
+.item-4:hover{
+    animation-name: close;
+    color: rgb(255, 100, 177);
+
+    animation-duration: 1s;
+}
+.search-form{
+    position: fixed;
+    left: 55%;
+    top: 5%;
+    width: 30%;
+    list-style: none;
+    padding: 10px;
+    background-color: white;
+    border-radius: 4px;
+}
+.search-form div{
+    display: flex;
+}
+.search-form li{
+    color: black;
+    cursor: grab;
+}
+li{
+    list-style: none;
+}
+.search-form input{
+    width: 90%;
+    padding: 10px;
+    border: 1px solid white;
+    color: rgb(0, 0, 0);
+    font-size: 15px;
+    border-bottom-color:rgb(80, 80, 80) ;
+}
+.container-modal{
+    width: 100%;
+    text-align: center;
+}
+.container-modal img{
+    width: 22px;
+    height: 22px;
+    margin-left: 3px;
+
+}
+
+.img-modal img{
+    width: 100%;
+}
+.login-Modal{
+    width: 100%;
+    height: 100vh;
+    background-image: linear-gradient(rgb(0, 255, 157), rgb(0, 70, 128));
+    background-image: url('/imagen1.jpg');
+    color: white;
+
+}
+.left-item{
+    margin-left: auto;
+    cursor: grab;
+}
+li{
+    cursor: grab;
+}
+.container-modal{
+    text-align: center;
+    width: 100%;
+    height: 100vh;
+    padding-top: 90px;
+    background-image: linear-gradient(rgba(0, 255, 157, 0.329), rgba(0, 70, 128, 0.541));
+
+}
+.logo-modal{
+    animation: logo 2s;
+}
+@media (max-width:700px){
+    .search-form:hover{
+        left:45%;
+        transition: 1s;
+        width: 50%;
+
+    }
+}
+@keyframes close{
+    0%{transform: rotate(0deg);}
+    0%{transform: rotate(45deg);}
+    0%{transform: rotate(90deg);}
+    0%{transform: rotate(135deg);}
+    0%{transform: rotate(175deg);}
+    0%{transform: rotate(215deg);}
+    0%{transform: rotate(255deg);}
+    0%{transform: rotate(295deg);}
+    0%{transform: rotate(335deg);}
+    0%{transform: rotate(360deg);}    
+}
+@keyframes logo{
+    0%{transform: rotate(0deg);}
+    0%{transform: rotate(45deg);}
+    0%{transform: rotate(90deg);}
+    0%{transform: rotate(135deg);}
+    0%{transform: rotate(175deg);}
+    0%{transform: rotate(215deg);}
+    0%{transform: rotate(255deg);}
+    0%{transform: rotate(295deg);}
+    0%{transform: rotate(335deg);}
+    0%{transform: rotate(360deg);}    
+}
+.shopIcon{
+    position: fixed;
+    right:-10%;
+    top: 70%;
+    animation:4s lopshop infinite;
+    
+
+}
+
+@keyframes lopshop{
+    0%{right: 0%;}
+    0%{right:5%;}
+    0%{right: 10%;}
+    0%{right: 15%;}
+    0%{right: 20%;}
+    0%{right: 25%;}
+    0%{right: 30%;}
+    0%{right: 35%;}
+    0%{right: 40%;}
+    0%{right: 45%;}
+    0%{right: 48%;}
+    0%{right: 50%;}
+    0%{right: 55%;}
+    0%{right: 60%;}
+    0%{right: 65%;}
+    0%{right: 70%;}
+    0%{right: 75%;}
+    0%{right: 80%;}
+    0%{right: 95%;} 
+    0%{right: 100%;}
+    0%{right: 110%;}
+    0%{right: 120%;}
+    0%{right: 130%;}
+    0%{right: 140%;}
+
+
+   
+}
+.salir-container{
+    text-align: center;
+    margin-left: auto;
+    margin-right: auto;
+    margin-top:70px ;
+    width: 330px;
+    color: white;
+    border-radius: 15px;
+    background-color: #002336;
+    padding: 15px;
+}
