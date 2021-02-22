@@ -14,7 +14,9 @@ import Grid from '@material-ui/core/Grid';
 import Typography from '@material-ui/core/Typography';
 import DraftsIcon from '@material-ui/icons/Drafts';
 import DeleteIcon from '@material-ui/icons/Delete';
-import {listenDataItemsFacturas} from '../Firebase/crearCotizacion'
+import {firebaseG} from '../Firebase/FirebaseConf'
+const db = firebaseG.firestore();
+
 const useStyles = makeStyles((theme) => ({
   root: {
     flexGrow: 1,
@@ -38,14 +40,26 @@ function generate(element) {
   );
 }
 
+
 export default function ListaCotizacion() {
   const classes = useStyles();
   const [dense, setDense] = React.useState(false);
   const [secondary, setSecondary] = React.useState(false);
-  const [ dataItems, setDataItems ] = useState([  ])
+  const[data, setData]=useState([])
+  const getData =()=>{
 
-
-  listenDataItemsFacturas()
+    firebaseG.auth().onAuthStateChanged(async (user) => {
+       db.collection(user.email).doc('Facturas').collection('Facturas-yariely').onSnapshot((querySnapshot)=>{
+      const docs = [];
+      querySnapshot.forEach(doc =>{
+        docs.push(doc.data(),doc.id)
+        
+      })
+      setData(docs)
+  });
+     })
+   }
+  console.log(data)
   return (
     <div className={classes.root}>
       <FormGroup row>
@@ -66,31 +80,7 @@ export default function ListaCotizacion() {
         />
       </FormGroup>        
         <Grid item xs={12}>
-          <Typography variant="h6" className={classes.title}>
-            Lista de cotizaciones
-          </Typography>
-          <div className={classes.demo}>
-            <List dense={dense}>
-             
-                <ListItem>
-                  <ListItemAvatar>
-                    <Avatar>
-                      <DraftsIcon />
-                    </Avatar>
-                  </ListItemAvatar>
-                  <ListItemText
-                    primary="Single-line ite"
-                    secondary={secondary ? 'Secondary text' : null}
-                  />
-                  <ListItemSecondaryAction>
-                    <IconButton edge="end" aria-label="delete">
-                      <DeleteIcon />
-                    </IconButton>
-                  </ListItemSecondaryAction>
-                </ListItem>
-              
-            </List>
-          </div>
+            
         </Grid>
 
     </div>

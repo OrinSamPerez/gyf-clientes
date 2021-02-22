@@ -1,81 +1,132 @@
-import React from 'react';
-import PropTypes from 'prop-types';
-import { makeStyles } from '@material-ui/core/styles';
-import AppBar from '@material-ui/core/AppBar';
-import Tabs from '@material-ui/core/Tabs';
-import Tab from '@material-ui/core/Tab';
-import Typography from '@material-ui/core/Typography';
-import Box from '@material-ui/core/Box';
-import ListaCotizacion from '../Components/ListaCotizacion'
-
-function TabPanel(props) {
-  const { children, value, index, ...other } = props;
-
-  return (
-    <div
-      role="tabpanel"
-      hidden={value !== index}
-      id={`simple-tabpanel-${index}`}
-      aria-labelledby={`simple-tab-${index}`}
-      {...other}
-    >
-      {value === index && (
-        <Box p={3}>
-          <Typography>{children}</Typography>
-        </Box>
-      )}
-    </div>
-  );
-}
-
-TabPanel.propTypes = {
-  children: PropTypes.node,
-  index: PropTypes.any.isRequired,
-  value: PropTypes.any.isRequired,
-};
-
-function a11yProps(index) {
-  return {
-    id: `simple-tab-${index}`,
-    'aria-controls': `simple-tabpanel-${index}`,
-  };
-}
-
-const useStyles = makeStyles((theme) => ({
-  root: {
-    flexGrow: 1,
-    paddingTop:'40px',
-    paddingBottom:'25px',
-    paddingLeft:'50px',
-    paddingRight:'5px',
-  
-    backgroundColor: theme.palette.background.paper,
-  },
-}));
-
+import {useState} from 'react';
+import Paper from '@material-ui/core/Paper'
+import {firebaseG} from '../Firebase/FirebaseConf'
+import Avatar from '@material-ui/core/Avatar'
+import NotesIcon from '@material-ui/icons/Notes';
+import Button from '@material-ui/core/Button'
+import Modal from '@material-ui/core/Modal'
+import TablaShop from '../Components/TablaShop';
+const db = firebaseG.firestore()
 export default function Shop(props) {
-  const classes = useStyles();
-  const [value, setValue] = React.useState(0);
+const [row, setRowItems]= useState([ ])
+const [open, setOpen ] = useState(false)
+const [currentId, setCurrentId]=useState('')
+firebaseG.auth().onAuthStateChanged(async user =>{
+  firebaseG.firestore().collection(user.email).doc('ListaCotizacion').collection('ListaCotizacion').get().then(function(querySnapshot) {
+    const docs = []
+    querySnapshot.forEach(function(doc) {
+      docs.push({...doc.data(),id:doc.id})
+    });
+    setRowItems(docs)
+});
 
-  const handleChange = (event, newValue) => {
-    setValue(newValue);
-  };
+})
+const close = ()=>{
+  setOpen(false)
+}
+const tablaData = (id)=>{
+  setOpen(true)
+  setCurrentId(id)
+
+}
 
   return (
-    <div className={classes.root}>
-      <AppBar position="static">
-        <Tabs value={value} onChange={handleChange} aria-label="simple tabs example">
-          <Tab label="Lista" {...a11yProps(0)} />
-          <Tab label="Estados Cotizaciones" {...a11yProps(1)} />
-        </Tabs>
-      </AppBar>
-      <TabPanel value={value} index={0}>
-       <ListaCotizacion />
+    <>
+    <Modal
+    open={open}
+    ><>
+    <Button onClick={close} variant="contained" color="secondary">
+      Salir
+    </Button>
+      <TablaShop id={currentId}/>
+      </>
+    </Modal>
+
+    <div title="Ver detalles de la facturas" >
+      <h1>Listado existente de facturas</h1>
+      {
+        row.length === 0?<h1>Todavia no existe ninguna factura</h1>
+        :row.map(datos =>
+        <>
+          <section>
+            <Paper onClick={()=> tablaData(datos.id)} title="Ver detalles de la facturas" elevation={3}>
+              <span>
+               <Avatar style={{margin:10}}><NotesIcon color="primary" /></Avatar>
+                <h3>{datos.id}</h3>
+                <li>
+                  <Button variant="text" color="primary">
+                    <span className="">No Enviada</span>
+                  </Button>
+                 
+                </li>
+              </span>
+            </Paper>
+            
+          </section>
+
+          </>
+          
+        )
         
-      </TabPanel>
-      <TabPanel value={value} index={1}>
-        {props.Cotizacion}
-      </TabPanel>
+      }
+      <style jsx>{`
+      h3{
+        color:black;
+        padding-left:20px;
+        padding-top:15px;
+      }
+      h1{
+        color:black;
+        text-align:center;
+      }
+        div{
+          margin-top:70px;
+          text-align:center;
+          margin-left:auto;
+          margin-right:auto;
+          width:60%;
+        }
+        div:hover{
+          cursor:grab;
+        }
+        section{
+          margin-top:5px;
+          margin-bottom:5px;
+        }
+        span{
+          display:flex;
+          margin:5px;
+        }
+        @media (max-width:850px){
+          div{
+            width:80%;
+          }
+        }
+        li{
+          margin-top:8px;
+          margin-left:auto;
+        }
+        @media (max-width:510px){
+          div{
+            width:85%;
+            margin-right:5px;
+
+            
+          }
+        }
+        @media (max-width:411px){
+          div{
+            width:85%;
+            margin-right:5px;
+          }
+          h3{
+            padding-left:1px;
+          }
+        }
+
+      `}</style>
     </div>
-  );
+    </>
+  )
+  
 }

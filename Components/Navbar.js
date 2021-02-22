@@ -18,6 +18,7 @@ import {
 import Button from "@material-ui/core/Button";
 import MenuItems from "./MenuItems";
 import AppleIcon from '@material-ui/icons/Apple';
+import { delBasePath } from "next/dist/next-server/lib/router/router";
 
 export default function Navbar({ children }) {
   const [open, openModal] = useState(false);
@@ -49,6 +50,16 @@ export default function Navbar({ children }) {
     openOutModal(false);
 
   }
+  const getDataCotizacion = ()=>{
+    firebaseG.auth().onAuthStateChanged(async ()=>{
+      db.collection(user.email).doc('Facturas-Clientes').g
+    })
+  }
+  // firebaseG.auth().onAuthStateChanged(user=>{
+  //   firebaseG.firestore().collection(user.email).doc('Facturas-Clientes').get().then( datos =>{
+  //     setRowItems(datos)
+  //   });
+  // })
   const bodyButton = (
     <div onClick={close} className="item-4 left-item">
       <li title="Salir de la aplicacion">

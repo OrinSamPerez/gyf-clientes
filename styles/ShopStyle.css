@@ -2,11 +2,13 @@
     color: #3a3a3a;
     font-family: "Poppins", sans-serif;
     font-size: 14px;
-    padding-top: 99px;
+    padding-top: 10px;
     padding-left:39px ;
+    overflow:scroll;
+    height: 97vh;
   }
   .cart-page .cart-page-container {
-    max-width: 1150px;
+    max-width: 90%;
     margin: 0 auto;
   }
   .cart-page .cart-page-container .bold-text {
@@ -17,12 +19,12 @@
   }
   .cart-page .cart-page-header {
     padding: 15px;
-    margin-bottom: 15px;
+    margin-bottom: 0px;
     background: #f1f1f1;
   }
   @media screen and (min-width: 768px) {
     .cart-page .cart-page-header {
-      margin-bottom: 25px;
+      margin-bottom: 3px;
       display: flex;
       flex-wrap: wrap;
       align-items: center;
@@ -166,6 +168,7 @@
     color: #ffffff;
   }
   .cart-page table.cart-table-product tr.cart-table-content {
+    color:white;
     padding: 0 15px;
   }
   .cart-page table.cart-table-product tr.cart-table-content p {
@@ -229,6 +232,9 @@
   }
   .cart-page table.cart-table-product td {
     position: relative;
+    background: #f1f1f1;
+    color:black;
+
   }
   .cart-page table.cart-table-product td:after {
     content: "";
@@ -237,7 +243,8 @@
     position: absolute;
     left: 0;
     bottom: -1px;
-    background: #f1f1f1;
+ 
+
   }
   .cart-page table.cart-table-product td img {
     max-width: 130px;
@@ -282,6 +289,7 @@
   }
   .cart-page .cart-block-right {
     text-align: right;
+    margin-bottom: 5px;
   }
   .cart-page .cart-page-discount {
     padding: 15px;

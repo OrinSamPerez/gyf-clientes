@@ -1,12 +1,12 @@
 import {useState,useEffect} from "react";
 import {listenDataItems} from '../Firebase/GetProducto'
-
 import ProductImg from '../Components/ProductImg'
 export default function Home() {
   const [ rowProducto, setRowProducto ] = useState([])
   useEffect(()=>{
     listenDataItems(newData=>{setRowProducto(newData)})
   },[])
+  console.log(rowProducto)
   return (
     <div>
       <main className="app-container">
@@ -15,13 +15,14 @@ export default function Home() {
         rowProducto.map(row=>
           <ProductImg 
           title={row.nombreProducto}
-          empresa={row.Empresa}
+          empresa={row.nameEmpresa}
           descripcion={row.Descripcion}
-          image={row.urlImage}
+          image={row.imageEmpresa}
           Correo={row.Correo}
-          Direccion={row.Direccion}
+          logo={row.imageLogo}
+          Direccion={row.direccionEmpresa}
           proveedor={row.Proveedor}
-          Numero = {row.Numero}
+          Numero = {row.numberEmpresa}
           />
 
         )

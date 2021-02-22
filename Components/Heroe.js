@@ -47,13 +47,19 @@ export default function Heroe(props){
                 .heroe-info p{
                     font-size:19px;
                 }
+                .logo{
+                    width:100px;
+                    border-radius:100px;
+                    height: 100px;
+                }
             `}</style>
         <div className="heroe-container">
             <div className="heroe-info">
                 <div>
+                    <img className="logo"src={props.imageLogo}/>
                     <h1>{props.Empresa}</h1>
-                    <p>Nos encontramos en <span>{props.Direccion }</span></p>
-                    <p>{props.Descripcion}</p>
+                    <p>Dirrecion: <span>{props.Direccion }</span></p>
+                    <p>Telefono: {props.telefono}</p>
                     <br></br>
                 </div>
 

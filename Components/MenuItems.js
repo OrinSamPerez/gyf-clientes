@@ -11,7 +11,8 @@ import Divider from "@material-ui/core/Divider"
 import {listenDataItems} from '../Firebase/AñadirProducto'
 import Link from 'next/link'
 import InboxIcon from '@material-ui/icons/Inbox';
-import Fab from '@material-ui/core/Fab'
+import Fab from '@material-ui/core/Fab';
+import {firebaseG} from '../Firebase/FirebaseConf'
 const drawerWidth = "300px";
 
 const useStyles = makeStyles(() => ({
@@ -31,9 +32,14 @@ const useStyles = makeStyles(() => ({
 export default function MenuItems({ valorDrawel, buttonList }) {
   const classes = useStyles();
   const [  rowItem, setRowItems] = useState([ ]) 
+  //scosnt [ dataItems, setDataItems ] = useState([ ])
   var listOpen = valorDrawel;
   useEffect(()=>{
-    listenDataItems(newData=>{setRowItems(newData)})
+    firebaseG.auth().onAuthStateChanged(user=>{
+      firebaseG.firestore().collection(user.email).doc('Facturas-Clientes').get().then(datos=>{
+        setRowItems(datos)
+      });
+    })
   },[])
   const deleteItems = ()=>{
     console.log()
@@ -50,7 +56,7 @@ export default function MenuItems({ valorDrawel, buttonList }) {
           }}
         >
           <ListItem>{buttonList}</ListItem>
-          {
+          {/* {
             rowItem.length === 0?
             (<ListItem>
             <ListItemAvatar>
@@ -80,7 +86,7 @@ export default function MenuItems({ valorDrawel, buttonList }) {
             </>
              )
           )
-          }
+          } */}
 
         </Drawer>
       </List>

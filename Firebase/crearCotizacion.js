@@ -27,10 +27,18 @@ export const sendCotizacion = (
   collectionDB
     .doc("Facturas")
     .collection(`Facturas-${Empresa}`)
-    .doc(nombreProducto)
+    .doc()
     .set({ Empresa, Cantidad, Direccion, emailEmpresa, Precio, nombreProducto })
     .then(function () {});
+ 
 };
+export const nameFacturas = (Empresa)=>{
+  collectionDB.doc("nameFacturas")
+  .collection(`nameFacturas`)
+  .doc(`Facturas-${Empresa}`)
+  .set({ Empresa})
+  .then(function () {});
+}
 //getDataCotizacion
 const getDataFirebase = (doc) => {
   const data = doc.data();
@@ -65,15 +73,4 @@ export const listenData = (callback) => {
   });
 };
 
-//Extraer ID facturas
-export const listenDataItemsFacturas = () => {
-  firebaseG.auth().onAuthStateChanged((user) => {
-    if (user) {
-      userEmail = user.email;
-      db.collection('perezorlin@gmail.com')
-      .onSnapshot(function(doc) {
-        return console.log("Current data: ", doc);
-    });
-    }
-  });
-};
+

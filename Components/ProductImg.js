@@ -3,6 +3,7 @@ import Link from 'next/link'
 export default function ProductImg(props) {
   const [productoG, setProductoG] =  useState('')
   const empresaLink = props.empresa.replace(/\s+/g, '');
+  const direccion = props.Direccion.replace(/\s+/g, '');
  const enviarDatosActuales= ()=>{setProductoG(props.Correo)}
  const NumeroTelefono = props.Numero
  let numeroT =  ((NumeroTelefono.length)-4)
@@ -29,15 +30,26 @@ export default function ProductImg(props) {
               background-position: center;
               background-size: cover;
             }
+            .logo{ 
+              width:150px;
+              height:150px;
+              text-align:center;
+              border-radius:50%;
+            }
+            h2{
+              font-size:40px;
+              text-align:center;
+            }
+
             `
         }
         </style>
         <a  onClick={enviarDatosActuales}>
-        <Link href={`Productos/${empresaLink}-${props.Direccion}-${urlNumero}`}>
+        <Link href={`Productos/${empresaLink}-${direccion}-${urlNumero}`}>
       <section id="card-city">
         <div id="left">
           <div id="left-bottom">
-            <h1> {props.empresa} </h1>
+            <h2> {props.empresa} </h2>
             <nav id="cityguide">
               <img
                 id="book"
@@ -50,7 +62,8 @@ export default function ProductImg(props) {
         </div>
         <div id="right">
           <div id="right_top">
-            <h2> {props.Direccion} </h2>
+
+            <h2> {props.empresa} </h2>
             <div id="circle"></div>
             <div class="squares" id="square_topdx"></div>
             <div class="squares" id="square_topsx"></div>
@@ -59,7 +72,10 @@ export default function ProductImg(props) {
           </div>
           <div id="right_middle">
             <p id="text">
-              {props.descripcion}
+            <img className="logo" src={props.logo}/>
+            <h3>Direccion:</h3> <span> {props.Direccion}</span> <br></br>
+            <h3>Numero:</h3> <span>{props.Numero} </span>         
+
             </p>
             <div id="line"></div>
             <div id="big_circle"></div>

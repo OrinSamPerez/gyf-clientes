@@ -2,23 +2,15 @@ import {firebaseG} from '../Firebase/FirebaseConf'
 
 const db = firebaseG.firestore()
 
-let collectionDB = db.collection("Proucto-Global")
+let collectionDB = db.collection("Empresas")
 
 
 const getDataFirebase = (doc) => {
     const data = doc.data();
     const { id } = doc.id;
-    const {Descripcion, Correo, Precio, Proveedor, Empresa, Direccion,urlImage, Numero}= data
+    const {imageLogo, imageEmpresa, nameEmpresa, numberEmpresa, direccionEmpresa}= data
     return {
-        urlImage,
-        Descripcion, 
-        Direccion,
-        Correo, 
-        Precio,
-        id,
-        Proveedor,
-        Empresa,
-        Numero
+      imageLogo, imageEmpresa, nameEmpresa, numberEmpresa, direccionEmpresa, 
     };
   };
   
@@ -43,8 +35,8 @@ const getDataFirebase = (doc) => {
 
   
 export const dataProducto = (doc) => {
-  const { Precio, imgProducto, nombreProducto }= doc.data();
-  return { Precio, imgProducto, nombreProducto  }
+  const { precioVentaProducto, imageProducto, cantidadProducto,nombreProducto , descuentoProducto}= doc.data();
+  return { precioVentaProducto, imageProducto, cantidadProducto, nombreProducto , descuentoProducto }
 };
   export const DataEmpresaProducto = (emailEmpresa,callback) => {
         
