@@ -36,9 +36,11 @@ export default function MenuItems({ valorDrawel, buttonList }) {
   var listOpen = valorDrawel;
   useEffect(()=>{
     firebaseG.auth().onAuthStateChanged(user=>{
-      firebaseG.firestore().collection(user.email).doc('Facturas-Clientes').get().then(datos=>{
-        setRowItems(datos)
-      });
+      if(user != null){
+        firebaseG.firestore().collection(user.email).doc('Facturas-Clientes').get().then(datos=>{
+          setRowItems(datos)
+        });
+      }
     })
   },[])
   const deleteItems = ()=>{

@@ -50,11 +50,11 @@ export default function Navbar({ children }) {
     openOutModal(false);
 
   }
-  const getDataCotizacion = ()=>{
-    firebaseG.auth().onAuthStateChanged(async ()=>{
-      db.collection(user.email).doc('Facturas-Clientes').g
-    })
-  }
+  // const getDataCotizacion = ()=>{
+  //   firebaseG.auth().onAuthStateChanged(async ()=>{
+  //     db.collection(user.email).doc('Facturas-Clientes')
+  //   })
+  // }
   // firebaseG.auth().onAuthStateChanged(user=>{
   //   firebaseG.firestore().collection(user.email).doc('Facturas-Clientes').get().then( datos =>{
   //     setRowItems(datos)

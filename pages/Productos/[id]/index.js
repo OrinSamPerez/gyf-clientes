@@ -40,8 +40,8 @@ export default function Productos() {
       });
     }
   }, []);
+  document.title = Empresa
 
-console.log(productos)
   return (
     <>
   <div className="global-container-product">

@@ -4,7 +4,13 @@ import Button from '@material-ui/core/Button'
 import {firebaseG} from '../Firebase/FirebaseConf'
 import RestoreFromTrashIcon from '@material-ui/icons/RestoreFromTrash';
 import DeleteOutlineIcon from '@material-ui/icons/DeleteOutline';
+import { confirmAlert } from 'react-confirm-alert'; // Import
+//import {Mailer} from 'react-n'
+//import {nodemailer} from 'nodemailer'
+import {sendEmail }from '../service/sendEmail'
+
 const db = firebaseG.firestore()
+
 export default function TablaShop(props){
     var meses = new Array ("Enero","Febrero","Marzo","Abril","Mayo","Junio","Julio","Agosto","Septiembre","Octubre","Noviembre","Diciembre");
     const fecha = new Date();
@@ -15,6 +21,8 @@ export default function TablaShop(props){
     setTimeout(()=>{
         setHora(horaActual)
     },1000)
+  let TOTAL = 0;
+  let SUBTOTAL = 0;
   const getData =()=>{
     firebaseG.auth().onAuthStateChanged(async (user)=>{
       firebaseG.firestore().collection(user.email).doc('Facturas-Clientes').collection(props.id).onSnapshot((querySnapshot)=>{
@@ -27,28 +35,72 @@ export default function TablaShop(props){
       });
       })
     }
-  
+    //Total y subtotal
+        getItemsData.map(row=>{
+          SUBTOTAL += row.precio * row.cantidadSeleccionada
+          TOTAL += ((((row.precio * row.cantidadSeleccionada ) * 18)/100) + (row.precio * row.cantidadSeleccionada)) - (((row.precio * row.cantidadSeleccionada ) * row.descuento)/100 ) 
+        })
+       
+
+      
+
+
     useEffect(()=>{
       getData()
     },[])
     const onDelete = (id) => {
-
-      if (window.confirm("¿Seguro que deseas eliminar?")) {
-  
-        firebaseG.auth().onAuthStateChanged(async (user) => {
-          await db.collection(user.email).doc('Facturas-Clientes').collection(props.id).doc(id).delete();
-      })
-      }
+      confirmAlert({
+        title: 'Seguro que lo deseas eliminar',
+        message: '¿Estas seguro que lo deseas eliminar?.',
+        buttons: [
+          {
+            label: 'Si',
+            onClick: () => {
+            firebaseG.auth().onAuthStateChanged(async (user) => {
+              await db.collection(user.email).doc('Facturas-Clientes').collection(props.id).doc(id).delete();
+            })}
+          },
+          {
+            label: 'No',
+            onClick: () => console.log('')
+          }
+        ]
+      });
   }
   const onDeleteClick = (id)=>{
-    if (window.confirm("¿Seguro que deseas eliminar?")) {
-    
-      firebaseG.auth().onAuthStateChanged(async (user) => {
-        await db.collection(user.email).doc('ListaCotizacion').collection('ListaCotizacion').doc(id).delete();
-    })
-    }
+    confirmAlert({
+      title: 'Seguro que lo deseas eliminar',
+      message: '¿Estas seguro que lo deseas eliminar?.',
+      buttons: [
+        {
+          label: 'Si',
+          onClick: () => {
+          firebaseG.auth().onAuthStateChanged(async (user) => {
+              await db.collection(user.email).doc('ListaCotizacion').collection('ListaCotizacion').doc(id).delete();
+          })}
+        },
+        {
+          label: 'No',
+          onClick: () => console.log('')
+        }
+      ]
+    });
+ 
   }
-  
+  const enviarFactura = async () =>{
+    const THEAD = document.querySelectorAll('thead > tr > th ')
+    const TBODY = document.querySelectorAll('tbody > tr > td')
+    for(let i =0;i<THEAD.length;i++){
+      console.log(THEAD[i].outerText)
+    }
+    for(let i =0;i<TBODY.length;i++){
+      console.log(TBODY[i].outerText)
+    }
+
+    sendEmail()
+
+  }
+
     return(
         <>
             <div className="products products-table">
@@ -74,10 +126,6 @@ export default function TablaShop(props){
         <div className="order-received-col">
           <span className="">Empresa:</span>
           <span className="bold-text">{props.id}</span>
-        </div>
-        <div className="order-received-col">
-          <span className="">Numero de factura</span>
-          <span className="bold-text">$100</span>
         </div>
         <Button onClick={()=> onDeleteClick(props.id)} variant="outlined" color="secondary">
            Elminar factura <RestoreFromTrashIcon />
@@ -112,12 +160,12 @@ export default function TablaShop(props){
             <td className="cart-table-sizes">RD$ {(((row.precio * row.cantidadSeleccionada ) * 18)/100)  }</td>
             <td className="cart-table-sizes">RD$ {((((row.precio * row.cantidadSeleccionada ) * 18)/100) + (row.precio * row.cantidadSeleccionada)) - (((row.precio * row.cantidadSeleccionada ) * row.descuento)/100 ) }</td>
            
-            <td className=""> 
+            <li className=""> 
               <Button onClick={()=>onDelete(row.id)} variant="outlined" color="secondary">
                   <DeleteOutlineIcon color="secondary"/>
               </Button>
-             </td>
-            <td className="cart-table-icon red-text right-text-mobile"><i className="fa fa-close"></i></td>
+             </li>
+            <li className="cart-table-icon red-text right-text-mobile"><i className="fa fa-close"></i></li>
           </tr>
   
             )
@@ -131,8 +179,16 @@ export default function TablaShop(props){
                       <td className="cart-table-image-info"></td>
                       <td><span className="bold-text"></span></td>
                       <td><span className="bold-text"> </span></td>
-                      <td><span className="bold-text">SubTotal: </span>Thursday, 26  2018</td>
-                      <td><span className="bold-text">Total: </span>$1.568</td>
+                      <td><span className="bold-text">SubTotal: </span>{SUBTOTAL}</td>
+                      <td><span className="bold-text">Total: </span>{TOTAL}</td>
+                      <td><span className="bold-text">
+                        <Button variant="outlined" color="secondary">
+                            Descargar Factura
+                        </Button>
+                        <Button onClick={enviarFactura} variant="outlined" color="primary">
+                          Enviar factura
+                        </Button> 
+                      </span></td>
                     </tr>
                   </table>
                 </div>
@@ -143,14 +199,8 @@ export default function TablaShop(props){
       </table>
     </div>
     <div className="cart-block-right">
-      <div className="cart-table-bill">
-        <div className="bill-sub">Subtotal: $1.00</div>
-        <div className="bill-total bold-text">Total: $1.00</div>
-      </div>
       <div className="cart-header-footer">
-        <Button variant="contained" color="primary">
-          Crear cotizacion
-        </Button>
+        
       </div>
     </div>
   </div>

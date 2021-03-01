@@ -6,19 +6,23 @@ import NotesIcon from '@material-ui/icons/Notes';
 import Button from '@material-ui/core/Button'
 import Modal from '@material-ui/core/Modal'
 import TablaShop from '../Components/TablaShop';
-const db = firebaseG.firestore()
+//const db = firebaseG.firestore()
 export default function Shop(props) {
 const [row, setRowItems]= useState([ ])
 const [open, setOpen ] = useState(false)
 const [currentId, setCurrentId]=useState('')
+const [total, setTotal] = useState('')
+const [subTotal, setSubTotal] = useState('')
 firebaseG.auth().onAuthStateChanged(async user =>{
-  firebaseG.firestore().collection(user.email).doc('ListaCotizacion').collection('ListaCotizacion').get().then(function(querySnapshot) {
-    const docs = []
-    querySnapshot.forEach(function(doc) {
-      docs.push({...doc.data(),id:doc.id})
+  if(user != null){
+    firebaseG.firestore().collection(user.email).doc('ListaCotizacion').collection('ListaCotizacion').get().then(function(querySnapshot) {
+      const docs = []
+      querySnapshot.forEach(function(doc) {
+        docs.push({...doc.data(),id:doc.id})
+      });
+      setRowItems(docs)
     });
-    setRowItems(docs)
-});
+  }
 
 })
 const close = ()=>{
@@ -36,7 +40,7 @@ const tablaData = (id)=>{
     open={open}
     ><>
     <Button onClick={close} variant="contained" color="secondary">
-      Salir
+      Ocultar Ventana
     </Button>
       <TablaShop id={currentId}/>
       </>
