@@ -10,6 +10,7 @@ import Modal from "@material-ui/core/Modal";
 import CloseIcon from "@material-ui/icons/Close";
 import StorefrontIcon from '@material-ui/icons/Storefront';
 import ShoppingCartIcon from '@material-ui/icons/ShoppingCart';
+import NotificationsActiveIcon from '@material-ui/icons/NotificationsActive';
 import {
   singInGoogle,
   singInApple,
@@ -123,9 +124,7 @@ export default function Navbar({ children }) {
                 <li title="Ir a cotizacion">
                   <Link href="/Shop">
                     <a>
-                      <Badge badgeContent={5}>
                         <LocalMallIcon />
-                      </Badge>
                     </a>
                   </Link>
                 </li>
@@ -133,7 +132,7 @@ export default function Navbar({ children }) {
               <div onClick={openD} className="item-3">
                 <li title="Ver lista de facturas">
                   <a>
-                    <ListIcon />
+                    <NotificationsActiveIcon />
                   </a>
                 </li>
               </div>

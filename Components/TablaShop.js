@@ -5,10 +5,7 @@ import {firebaseG} from '../Firebase/FirebaseConf'
 import RestoreFromTrashIcon from '@material-ui/icons/RestoreFromTrash';
 import DeleteOutlineIcon from '@material-ui/icons/DeleteOutline';
 import { confirmAlert } from 'react-confirm-alert'; // Import
-//import {Mailer} from 'react-n'
-//import {nodemailer} from 'nodemailer'
-import {sendEmail }from '../service/sendEmail'
-
+import emailjs from 'emailjs-com'
 const db = firebaseG.firestore()
 
 export default function TablaShop(props){
@@ -16,11 +13,18 @@ export default function TablaShop(props){
     const fecha = new Date();
     const [hora, setHora] = useState()
     const [getItemsData, setGetItemsData] = useState([])
-
     const horaActual = (`${fecha.getHours()}:${fecha.getMinutes()}:${fecha.getSeconds()}`)
     setTimeout(()=>{
         setHora(horaActual)
     },1000)
+    const valueSend = {
+      diaActual:`${fecha.getDate()}/${meses[fecha.getMonth()]}/${fecha.getFullYear()}`,
+      horaActual:`${fecha.getHours()}:${fecha.getMinutes()}:${fecha.getSeconds()}`,
+      productos:[],
+      email:'',
+    }
+    const [ sendFactura, setSendFactura ] = useState(valueSend)
+
   let TOTAL = 0;
   let SUBTOTAL = 0;
   const getData =()=>{
@@ -41,9 +45,21 @@ export default function TablaShop(props){
           TOTAL += ((((row.precio * row.cantidadSeleccionada ) * 18)/100) + (row.precio * row.cantidadSeleccionada)) - (((row.precio * row.cantidadSeleccionada ) * row.descuento)/100 ) 
         })
        
-
+    
+      const [ empresaE,emailEmpresa] = useState([])
       
-
+        firebaseG.auth().onAuthStateChanged(async user =>{
+          if(user != null){
+            firebaseG.firestore().collection(user.email).doc('ListaCotizacion').collection('ListaCotizacion').doc(props.id).get().then(doc=>{
+              const docs = [];
+              if(doc.exists){
+                docs.push(doc.data())
+              }
+              emailEmpresa(docs)
+            })
+          }
+        
+        })
 
     useEffect(()=>{
       getData()
@@ -67,6 +83,7 @@ export default function TablaShop(props){
         ]
       });
   }
+
   const onDeleteClick = (id)=>{
     confirmAlert({
       title: 'Seguro que lo deseas eliminar',
@@ -77,6 +94,10 @@ export default function TablaShop(props){
           onClick: () => {
           firebaseG.auth().onAuthStateChanged(async (user) => {
               await db.collection(user.email).doc('ListaCotizacion').collection('ListaCotizacion').doc(id).delete();
+              getItemsData.map(doc =>{
+                db.collection(user.email).doc('Facturas-Clientes').collection(props.id).doc(doc.id).delete();
+              })
+              
           })}
         },
         {
@@ -84,20 +105,39 @@ export default function TablaShop(props){
           onClick: () => console.log('')
         }
       ]
+     
     });
  
   }
   const enviarFactura = async () =>{
-    const THEAD = document.querySelectorAll('thead > tr > th ')
-    const TBODY = document.querySelectorAll('tbody > tr > td')
-    for(let i =0;i<THEAD.length;i++){
-      console.log(THEAD[i].outerText)
-    }
-    for(let i =0;i<TBODY.length;i++){
-      console.log(TBODY[i].outerText)
-    }
+    sendFactura.productos = getItemsData
+    firebaseG.firestore().collection('Empresas').doc(props.id).get().then(async doc=>{
+      if(doc.exists){
+         firebaseG.auth().onAuthStateChanged(async user=>{
+          if(user != null){
+            sendFactura.email = user.email
+            await firebaseG.firestore().collection(empresaE.empresaEmail).doc('Clientes-Facturas').collection('Clientes-Facturas').doc(user.email).set(sendFactura)
+            await firebaseG.firestore().collection(user.email).doc('ListaCotizacion').collection('ListaCotizacion').doc(props.id).update({"estado":"Factura Enviada - No Pagada"})  
+            var templateParams = {
+              Title:`El cliente con el correo ${user.email} ha realizado una cotizacion`,
+              FromTo:`${user.email}`,
+              day:`${fecha.getDate()}/${meses[fecha.getMonth()]}/${fecha.getFullYear()}`,
+              hours:`${hora}`,
+              message:`¡PARA MAS INFORMACION REVISAR EN LA PAGINA DE CLIENTES!`,
+              reply_to:`${user.email}`,
+              sendEmailDynamic:`${doc.data().emailEmpresa}`
+          };
+            emailjs.send("service_9tcef9z","template_b5dfmeb",templateParams, "user_f0BIzPQzmrASZorH7Da4S").then(result=>{
+              console.log(result)
+            }), (error)=>{
+              console.log(error)
+            }
+        
+          }
+      })
+      }
 
-    sendEmail()
+    })
 
   }
 
@@ -109,7 +149,7 @@ export default function TablaShop(props){
   <div className="cart-page-container">
     <div className="cart-page-header">
       <div className="cart-header-footer">
-        <Link href="/" className="cart-header-cta" target="_blank">Continuar buscando</Link>
+        <Link href={`/Productos/${props.id}`} className="cart-header-cta" target="_blank">Continuar buscando</Link>
       </div>
     </div>
     <div className="cart-page-header page-order-received">
@@ -179,15 +219,25 @@ export default function TablaShop(props){
                       <td className="cart-table-image-info"></td>
                       <td><span className="bold-text"></span></td>
                       <td><span className="bold-text"> </span></td>
-                      <td><span className="bold-text">SubTotal: </span>{SUBTOTAL}</td>
-                      <td><span className="bold-text">Total: </span>{TOTAL}</td>
+                      <td id="sub-total"><span className="bold-text">SubTotal: </span>RD$ {SUBTOTAL}</td>
+                      <td id="total"><span className="bold-text">Total: </span>RD$ {TOTAL}</td>
                       <td><span className="bold-text">
                         <Button variant="outlined" color="secondary">
                             Descargar Factura
                         </Button>
-                        <Button onClick={enviarFactura} variant="outlined" color="primary">
-                          Enviar factura
-                        </Button> 
+                        &nbsp; &nbsp; &nbsp; 
+                        {
+                          empresaE.length === 0?console.log('')
+                          :empresaE[0].estado != 'No Enviada' ?
+                          <Button  variant="text" color="primary">
+                              Esta factura ya fue enviada
+                            </Button> 
+                          :<Button onClick={enviarFactura} variant="outlined" color="primary">
+                              Enviar factura
+                            </Button> 
+                        } 
+  
+   
                       </span></td>
                     </tr>
                   </table>

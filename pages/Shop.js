@@ -11,8 +11,9 @@ export default function Shop(props) {
 const [row, setRowItems]= useState([ ])
 const [open, setOpen ] = useState(false)
 const [currentId, setCurrentId]=useState('')
-const [total, setTotal] = useState('')
-const [subTotal, setSubTotal] = useState('')
+//const [total, setTotal] = useState('')
+//const [subTotal, setSubTotal] = useState('')
+//document.title = ('Lista cotizaciones')
 firebaseG.auth().onAuthStateChanged(async user =>{
   if(user != null){
     firebaseG.firestore().collection(user.email).doc('ListaCotizacion').collection('ListaCotizacion').get().then(function(querySnapshot) {
@@ -21,6 +22,7 @@ firebaseG.auth().onAuthStateChanged(async user =>{
         docs.push({...doc.data(),id:doc.id})
       });
       setRowItems(docs)
+      //console.log(docs[0].estado)
     });
   }
 
@@ -33,7 +35,7 @@ const tablaData = (id)=>{
   setCurrentId(id)
 
 }
-
+let i = 0;
   return (
     <>
     <Modal
@@ -59,8 +61,9 @@ const tablaData = (id)=>{
                 <h3>{datos.id}</h3>
                 <li>
                   <Button variant="text" color="primary">
-                    <span className="">No Enviada</span>
+                    <span className="">{row[i].estado}</span>
                   </Button>
+                 <div className="noneDiv"> {i++}</div>
                  
                 </li>
               </span>
@@ -78,6 +81,9 @@ const tablaData = (id)=>{
         color:black;
         padding-left:20px;
         padding-top:15px;
+      }
+      .noneDiv{
+        display:none;
       }
       h1{
         color:black;

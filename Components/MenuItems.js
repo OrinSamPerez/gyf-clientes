@@ -34,18 +34,20 @@ export default function MenuItems({ valorDrawel, buttonList }) {
   const [  rowItem, setRowItems] = useState([ ]) 
   //scosnt [ dataItems, setDataItems ] = useState([ ])
   var listOpen = valorDrawel;
-  useEffect(()=>{
-    firebaseG.auth().onAuthStateChanged(user=>{
-      if(user != null){
-        firebaseG.firestore().collection(user.email).doc('Facturas-Clientes').get().then(datos=>{
-          setRowItems(datos)
+  firebaseG.auth().onAuthStateChanged(async user =>{
+    if(user != null){
+      firebaseG.firestore().collection(user.email).doc('ListaCotizacion').collection('ListaCotizacion').get().then(function(querySnapshot) {
+        const docs = []
+        querySnapshot.forEach(function(doc) {
+          docs.push({...doc.data(),id:doc.id})
         });
-      }
-    })
-  },[])
-  const deleteItems = ()=>{
-    console.log()
-  }
+        setRowItems(docs)
+      });
+    }
+  
+  })
+
+
   return (
     <div className={classes.root}>
       <List>
@@ -58,7 +60,7 @@ export default function MenuItems({ valorDrawel, buttonList }) {
           }}
         >
           <ListItem>{buttonList}</ListItem>
-          {/* {
+          {
             rowItem.length === 0?
             (<ListItem>
             <ListItemAvatar>
@@ -78,17 +80,14 @@ export default function MenuItems({ valorDrawel, buttonList }) {
                   <InboxIcon />
                   </Avatar>
                 </ListItemAvatar>
-                <ListItemText primary={row.titulo} secondary={row.precio} />
-                <Fab onClick={deleteItems} size="small" color="secondary" aria-label="">
-                  <RemoveShoppingCartIcon />
-                </Fab>
+                <ListItemText primary={row.id} secondary={row.estado} />
               </ListItem>
               </Link>
               <Divider/>
             </>
              )
           )
-          } */}
+          } 
 
         </Drawer>
       </List>

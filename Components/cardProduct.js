@@ -13,6 +13,8 @@ export default function CardProduct(props){
     nameEmpresa:'',
     productoEmpresa:'',
     descuento:'',
+    estado:'No Enviada',
+    empresaEmail: props.empresaEmail
     
   }
   const [values, setValues] = useState(valueInitial)
@@ -36,6 +38,7 @@ export default function CardProduct(props){
       }
       if(values.cantidadSeleccionada <= props.cantidad){
         firebaseG.auth().onAuthStateChanged(async (user) =>{
+          if(user != null){
           await db.collection(user.email).doc('Facturas-Clientes').collection(values.urlEmpresa).doc().set(values)
           await db.collection(user.email).doc('ListaCotizacion').collection('ListaCotizacion').doc(values.urlEmpresa).set(values)
           setValues(valueInitial)
@@ -48,6 +51,7 @@ export default function CardProduct(props){
             draggable: true,
             progress: undefined,
             });
+          }
         })
 
       }

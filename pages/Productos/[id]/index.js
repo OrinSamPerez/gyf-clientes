@@ -30,7 +30,7 @@ export default function Productos() {
         setTelefono(doc.data().numberEmpresa)
         const emailEmpresa = doc.data().emailEmpresa;
         setUrlImage(doc.data().imageEmpresa);
-        setEmpresaEmail(empresaEmail)
+        setEmpresaEmail(doc.data().emailEmpresa)
         DataEmpresaProducto(emailEmpresa).onSnapshot(({docs})=>{
           const  arrayData = docs.map(dataProducto)
           setProductos(arrayData)
@@ -40,7 +40,6 @@ export default function Productos() {
       });
     }
   }, []);
-  document.title = Empresa
 
   return (
     <>

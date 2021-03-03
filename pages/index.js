@@ -6,7 +6,6 @@ export default function Home() {
   useEffect(()=>{
     listenDataItems(newData=>{setRowProducto(newData)})
   },[])
-  console.log(rowProducto)
   return (
     <div>
       <main className="app-container">
