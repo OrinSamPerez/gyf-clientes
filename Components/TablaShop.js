@@ -66,10 +66,39 @@ export default function TablaShop(props){
       getData()
     },[])
     const onDelete = (id) => {
-      swal("¿Seguro que las desea eliminar?")
+      swal("¿Seguro que las desea eliminar?", {
+        buttons:['Cancelar','Eliminar']
+      })
       .then((value) => {
+        if(value === true){
+          firebaseG.auth().onAuthStateChanged(async (user) => {
+            await db.collection(user.email).doc('Facturas-Clientes').collection(props.id).doc(id).delete();
+            toast.info('Se ha eliminado correctamente', {
+              position: "top-right",
+              autoClose: 5000,
+              hideProgressBar: false,
+              closeOnClick: true,
+              pauseOnHover: true,
+              draggable: true,
+              progress: undefined,
+              });
+          })
+        }
+      });
+
+  }
+
+  const onDeleteClick = (id)=>{
+    swal("¿Seguro que las desea eliminar?",{
+      buttons:['Cancelar', 'Eliminar']
+    })
+    .then((value) => {
+      if(value === true){
         firebaseG.auth().onAuthStateChanged(async (user) => {
-          await db.collection(user.email).doc('Facturas-Clientes').collection(props.id).doc(id).delete();
+          await db.collection(user.email).doc('ListaCotizacion').collection('ListaCotizacion').doc(id).delete();
+          getItemsData.map(async doc =>{
+            await db.collection(user.email).doc('Facturas-Clientes').collection(props.id).doc(doc.id).delete();
+          })
           toast.info('Se ha eliminado correctamente', {
             position: "top-right",
             autoClose: 5000,
@@ -79,33 +108,9 @@ export default function TablaShop(props){
             draggable: true,
             progress: undefined,
             });
-        })
-      });
-    // const opcion = confirm('')
-    //   if(opcion == true){
         
-    //   }
-  }
-
-  const onDeleteClick = (id)=>{
-    swal("¿Seguro que las desea eliminar?")
-    .then((value) => {
-      firebaseG.auth().onAuthStateChanged(async (user) => {
-        await db.collection(user.email).doc('ListaCotizacion').collection('ListaCotizacion').doc(id).delete();
-        getItemsData.map(async doc =>{
-          await db.collection(user.email).doc('Facturas-Clientes').collection(props.id).doc(doc.id).delete();
         })
-        toast.info('Se ha eliminado correctamente', {
-          position: "top-right",
-          autoClose: 5000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-          });
-      
-      })
+      }
     });
     // if(opcion == true){
       
