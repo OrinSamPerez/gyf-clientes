@@ -5,7 +5,7 @@ import ListIcon from "@material-ui/icons/List";
 import Badge from "@material-ui/core/Badge";
 import LocalMallIcon from "@material-ui/icons/LocalMall";
 import Avatar from "@material-ui/core/Avatar";
-import Search from "./Search";
+//import Search from "./Search";
 import Modal from "@material-ui/core/Modal";
 import CloseIcon from "@material-ui/icons/Close";
 import StorefrontIcon from '@material-ui/icons/Storefront';
@@ -20,7 +20,7 @@ import Button from "@material-ui/core/Button";
 import MenuItems from "./MenuItems";
 import AppleIcon from '@material-ui/icons/Apple';
 import { delBasePath } from "next/dist/next-server/lib/router/router";
-
+import Head from 'next/head'
 export default function Navbar({ children }) {
   const [open, openModal] = useState(false);
   const [nameUser,setNameUser ]= useState('')
@@ -51,16 +51,19 @@ export default function Navbar({ children }) {
     openOutModal(false);
 
   }
-  // const getDataCotizacion = ()=>{
-  //   firebaseG.auth().onAuthStateChanged(async ()=>{
-  //     db.collection(user.email).doc('Facturas-Clientes')
-  //   })
-  // }
-  // firebaseG.auth().onAuthStateChanged(user=>{
-  //   firebaseG.firestore().collection(user.email).doc('Facturas-Clientes').get().then( datos =>{
-  //     setRowItems(datos)
-  //   });
-  // })
+  const [Notificiaciones,setNotificiaciones ] = useState([])
+  firebaseG.auth().onAuthStateChanged(async user =>{
+    if(user != null){
+      firebaseG.firestore().collection(user.email).doc('ListaCotizacion').collection('ListaCotizacion').get().then(function(querySnapshot) {
+        const docs = []
+        querySnapshot.forEach(function(doc) {
+          docs.push({...doc.data(),id:doc.id})
+        });
+        setNotificiaciones(docs)
+      });
+    }
+  
+  })
   const bodyButton = (
     <div onClick={close} className="item-4 left-item">
       <li title="Salir de la aplicacion">
@@ -72,6 +75,7 @@ export default function Navbar({ children }) {
   );
   return (
     <>
+
       <div className="grid-container">
         <div>
           {/* <Search /> */}
@@ -96,7 +100,10 @@ export default function Navbar({ children }) {
                 openModal(true);
               }
             })}
-
+            <Head>
+              <title>Registrarse</title>
+              <meta name="viewport" content="initial-scale=1.0, width=device-width" />
+            </Head>
             {/* Navbar */}
             <div className="nav-container">
               <div className="item-0">
@@ -132,8 +139,12 @@ export default function Navbar({ children }) {
               <div onClick={openD} className="item-3">
                 <li title="Ver lista de facturas">
                   <a>
-                    <NotificationsActiveIcon />
+                  <Badge badgeContent={Notificiaciones.length} color="primary">
+                        <NotificationsActiveIcon />
+                    </Badge>
+                    
                   </a>
+                 
                 </li>
               </div>
               <div onClick={singOut} className="item-4">

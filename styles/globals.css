@@ -15,7 +15,25 @@ a {
 * {
   box-sizing: border-box;
 }
-
+.searchGlobal{
+  position: fixed;
+  top:20px;
+  right: 4px;
+  border: 2px solid;
+  border-radius: 5px;
+  display: flex;
+  background-color: white;
+}
+.searchIcon{
+  padding-top: 10px;
+}
+.searchGlobal input{
+  padding: 12px;
+  border: none;
+  padding-left: 20px;
+  padding-right: 20px;
+  font-size: 14px;
+}
 .app-container{
 
   justify-content: center;

@@ -20,6 +20,7 @@
     "react": "17.0.1",
     "react-confirm-alert": "^2.7.0",
     "react-dom": "17.0.1",
-    "react-toastify": "^7.0.3"
+    "react-toastify": "^7.0.3",
+    "sweetalert": "^2.1.2"
   }
 }

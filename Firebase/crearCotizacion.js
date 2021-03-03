@@ -10,7 +10,7 @@ firebaseG.auth().onAuthStateChanged((user) => {
     userEmail = user.email;
     collectionDB = db.collection(userEmail);
   } else {
-    console.log("Espera");
+    console.log("");
   }
 });
 

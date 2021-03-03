@@ -6,7 +6,8 @@ import {
   DataEmpresaProducto,
   dataProducto,
 } from "../../../Firebase/GetProducto";
-
+import Head from 'next/head'
+import SearchIcon from '@material-ui/icons/Search';
 export default function Productos() {
   const [empresaEmail, setEmpresaEmail] = useState('')
   const [productos, setProductos] = useState([ ]);
@@ -16,6 +17,7 @@ export default function Productos() {
   const [Logo, setLogo ] = useState('');
   const [telefono, setTelefono ] = useState('');
   const [urlActual, setUrlActual]= useState('')
+  const [searchArray,setSearchArray ] = useState([])
   const [descuento, setDescuento] = useState('')
   useEffect(() => {
     if (typeof window !== "undefined") {
@@ -41,15 +43,36 @@ export default function Productos() {
     }
   }, []);
 
+  const changeSEARCH = (e)=>{
+    let palabraBuscar = e.target.value
+    let numeroPalabraBuscar = palabraBuscar.length;
+
+    const result = productos.filter(word => {
+      const PalabraProducto = word.nombreProducto; 
+      const caracterPalabrasActual = PalabraProducto.substr(0,numeroPalabraBuscar) 
+      return caracterPalabrasActual.toLowerCase()  === palabraBuscar.toLowerCase() 
+    })
+    setSearchArray(result)
+  }
   return (
     <>
+  <Head>
+    <title>{Empresa}</title>
+    <meta name="viewport" content="initial-scale=1.0, width=device-width" />
+  </Head>
+  <div className="searchGlobal">
+    <form>
+      <input name="search" onChange={changeSEARCH} type="text" placeholder="Buscar productos aqui..."/>
+    </form>
+    <div className="searchIcon"><SearchIcon/></div>
+  </div>
   <div className="global-container-product">
             
     <Heroe Image={urlImage} Empresa={Empresa} Direccion={Direccion} imageLogo={Logo} telefono={telefono} />
     <h1 className="producto-title">Productos de {Empresa}</h1>
     <div className="grid-empresa">
       {
-        
+        searchArray.length === 0?
           productos.map(producto =>
           <CardProduct 
             Empresa={Empresa}
@@ -63,6 +86,20 @@ export default function Productos() {
 
 
             /> )
+        :searchArray.map(producto =>
+          <CardProduct 
+            Empresa={Empresa}
+            empresaEmail={empresaEmail}
+            nombreProducto={producto.nombreProducto}
+            Precio = {producto.precioVentaProducto}
+            imgProducto= {producto.imageProducto}
+            cantidad={producto.cantidadProducto}
+            urlActual= {urlActual}
+            descuento = {producto.descuentoProducto}
+
+
+            /> 
+            )
         
       } 
       </div>

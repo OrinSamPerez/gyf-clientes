@@ -4,10 +4,11 @@ import Button from '@material-ui/core/Button'
 import {firebaseG} from '../Firebase/FirebaseConf'
 import RestoreFromTrashIcon from '@material-ui/icons/RestoreFromTrash';
 import DeleteOutlineIcon from '@material-ui/icons/DeleteOutline';
-import { confirmAlert } from 'react-confirm-alert'; // Import
-import emailjs from 'emailjs-com'
+import emailjs from 'emailjs-com';
+import 'react-toastify/dist/ReactToastify.css';
+import swal from 'sweetalert';
+import { ToastContainer, toast } from 'react-toastify';
 const db = firebaseG.firestore()
-
 export default function TablaShop(props){
     var meses = new Array ("Enero","Febrero","Marzo","Abril","Mayo","Junio","Julio","Agosto","Septiembre","Octubre","Noviembre","Diciembre");
     const fecha = new Date();
@@ -65,50 +66,55 @@ export default function TablaShop(props){
       getData()
     },[])
     const onDelete = (id) => {
-      confirmAlert({
-        title: 'Seguro que lo deseas eliminar',
-        message: '¿Estas seguro que lo deseas eliminar?.',
-        buttons: [
-          {
-            label: 'Si',
-            onClick: () => {
-            firebaseG.auth().onAuthStateChanged(async (user) => {
-              await db.collection(user.email).doc('Facturas-Clientes').collection(props.id).doc(id).delete();
-            })}
-          },
-          {
-            label: 'No',
-            onClick: () => console.log('')
-          }
-        ]
+      swal("¿Seguro que las desea eliminar?")
+      .then((value) => {
+        firebaseG.auth().onAuthStateChanged(async (user) => {
+          await db.collection(user.email).doc('Facturas-Clientes').collection(props.id).doc(id).delete();
+          toast.info('Se ha eliminado correctamente', {
+            position: "top-right",
+            autoClose: 5000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            });
+        })
       });
+    // const opcion = confirm('')
+    //   if(opcion == true){
+        
+    //   }
   }
 
   const onDeleteClick = (id)=>{
-    confirmAlert({
-      title: 'Seguro que lo deseas eliminar',
-      message: '¿Estas seguro que lo deseas eliminar?.',
-      buttons: [
-        {
-          label: 'Si',
-          onClick: () => {
-          firebaseG.auth().onAuthStateChanged(async (user) => {
-              await db.collection(user.email).doc('ListaCotizacion').collection('ListaCotizacion').doc(id).delete();
-              getItemsData.map(doc =>{
-                db.collection(user.email).doc('Facturas-Clientes').collection(props.id).doc(doc.id).delete();
-              })
-              
-          })}
-        },
-        {
-          label: 'No',
-          onClick: () => console.log('')
-        }
-      ]
-     
+    swal("¿Seguro que las desea eliminar?")
+    .then((value) => {
+      firebaseG.auth().onAuthStateChanged(async (user) => {
+        await db.collection(user.email).doc('ListaCotizacion').collection('ListaCotizacion').doc(id).delete();
+        getItemsData.map(async doc =>{
+          await db.collection(user.email).doc('Facturas-Clientes').collection(props.id).doc(doc.id).delete();
+        })
+        toast.info('Se ha eliminado correctamente', {
+          position: "top-right",
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          });
+      
+      })
     });
+    // if(opcion == true){
+      
+    // }
+    // console.log(opcion)
+
  
-  }
+}
+  
   const enviarFactura = async () =>{
     sendFactura.productos = getItemsData
     firebaseG.firestore().collection('Empresas').doc(props.id).get().then(async doc=>{
@@ -116,21 +122,59 @@ export default function TablaShop(props){
          firebaseG.auth().onAuthStateChanged(async user=>{
           if(user != null){
             sendFactura.email = user.email
-            await firebaseG.firestore().collection(empresaE.empresaEmail).doc('Clientes-Facturas').collection('Clientes-Facturas').doc(user.email).set(sendFactura)
-            await firebaseG.firestore().collection(user.email).doc('ListaCotizacion').collection('ListaCotizacion').doc(props.id).update({"estado":"Factura Enviada - No Pagada"})  
-            var templateParams = {
-              Title:`El cliente con el correo ${user.email} ha realizado una cotizacion`,
-              FromTo:`${user.email}`,
-              day:`${fecha.getDate()}/${meses[fecha.getMonth()]}/${fecha.getFullYear()}`,
-              hours:`${hora}`,
-              message:`¡PARA MAS INFORMACION REVISAR EN LA PAGINA DE CLIENTES!`,
-              reply_to:`${user.email}`,
-              sendEmailDynamic:`${doc.data().emailEmpresa}`
-          };
+            if(empresaE.empresaEmail != 'undefined')
+            {   await firebaseG.firestore().collection(empresaE[0].empresaEmail).doc('Clientes-Facturas').collection('Clientes-Facturas').doc(user.email).set(sendFactura)
+                await firebaseG.firestore().collection(user.email).doc('ListaCotizacion').collection('ListaCotizacion').doc(props.id).update({"estado":"Enviada - No Pagada"})  
+                var templateParams = {
+                  Title:`El cliente con el correo ${user.email} ha realizado una cotizacion`,
+                  FromTo:`${user.email}`,
+                  day:`${fecha.getDate()}/${meses[fecha.getMonth()]}/${fecha.getFullYear()}`,
+                  hours:`${hora}`,
+                  message:`¡PARA MAS INFORMACION REVISAR EN LA PAGINA DE CLIENTES!`,
+                  reply_to:`${user.email}`,
+                  sendEmailDynamic:`${doc.data().emailEmpresa}`
+              };}
+              else{
+                toast.info('Espere Un Momento Porfavor, Gracias Por Esperar', {
+                  position: "top-right",
+                  autoClose: 5000,
+                  hideProgressBar: false,
+                  closeOnClick: true,
+                  pauseOnHover: true,
+                  draggable: true,
+                  progress: undefined,
+                  });
+              }
             emailjs.send("service_9tcef9z","template_b5dfmeb",templateParams, "user_f0BIzPQzmrASZorH7Da4S").then(result=>{
-              console.log(result)
+              toast.success('¡Se ha enviado correctamente ✅!', {
+                position: "top-right",
+                autoClose: 5000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                });
+              toast.success('¡Gracias por ordenar con nosotros ✅!', {
+                position: "top-right",
+                autoClose: 5000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                });
             }), (error)=>{
-              console.log(error)
+              toast.error('¡A ocurrido un error, favor reintentar mas tarde ⚠️!', {
+                position: "top-right",
+                autoClose: 5000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                });
+                
             }
         
           }
@@ -156,7 +200,7 @@ export default function TablaShop(props){
       <div className="cart-header-notice">
         <span className="cart-header-icon"><i className="fa fa-check" aria-hidden="true"></i></span>
         <span className="cart-header-text">Gracias. Por ordenar con nosotros.</span>
-      </div>
+      </div> 
       <div className="cart-order-received">
         <div className="order-received-col received-col-mobile">
           <span className="">Fecha:</span>
@@ -256,6 +300,19 @@ export default function TablaShop(props){
   </div>
 </div>
       </div>
+      <ToastContainer
+        position="top-right"
+        autoClose={5000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        />
+        {/* Same as */}
+        <ToastContainer />
         </>
     )
 }
